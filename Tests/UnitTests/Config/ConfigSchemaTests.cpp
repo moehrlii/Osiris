@@ -61,6 +61,14 @@ TEST_F(ConfigSchemaTest, SchemaIsValid) {
         ++nestingLevels.back();
     });
 
+    const auto checkString = [this] {
+        EXPECT_GT(nestingLevels.size(), 0);
+        EXPECT_LT(nestingLevels.back(), config_params::kMaxObjectIndex);
+        ++nestingLevels.back();
+    };
+    EXPECT_CALL(mockConfigConversion, string(testing::_, testing::An<std::function<void(ConfigString<256>)>>(), testing::_)).WillRepeatedly(checkString);
+    EXPECT_CALL(mockConfigConversion, string(testing::_, testing::An<std::function<void(ConfigString<64>)>>(), testing::_)).WillRepeatedly(checkString);
+
     configSchema.performConversion(mockConfigConversion);
 }
 
@@ -91,6 +99,20 @@ TEST_F(ConfigSchemaTest, EachConfigVariableIsLoadedOnce) {
                 }));
             valueSetter(std::uint64_t{}); 
         }));
+
+    const auto loadString = [this](auto valueSetter) {
+        EXPECT_CALL(mockConfig, setVariableWithoutAutoSave(testing::_, testing::_))
+            .WillOnce(testing::WithArg<0>([this](std::size_t configVariableIndex) {
+                EXPECT_FALSE(configVariableIndexes.contains(configVariableIndex));
+                configVariableIndexes.insert(configVariableIndex);
+            }));
+        using StringType = typename decltype(valueSetter)::argument_type;
+        valueSetter(StringType{"test"});
+    };
+    EXPECT_CALL(mockConfigConversion, string(testing::_, testing::An<std::function<void(ConfigString<256>)>>(), testing::_))
+        .WillRepeatedly(testing::WithArg<1>(loadString));
+    EXPECT_CALL(mockConfigConversion, string(testing::_, testing::An<std::function<void(ConfigString<64>)>>(), testing::_))
+        .WillRepeatedly(testing::WithArg<1>(loadString));
 
     configSchema.performConversion(mockConfigConversion);
     EXPECT_EQ(configVariableIndexes.size(), ConfigVariableTypes::size());
@@ -125,6 +147,20 @@ TEST_F(ConfigSchemaTest, EachConfigVariableIsSavedOnce) {
             }));
             valueGetter(); 
         }));
+
+    const auto saveString = [this](auto valueGetter) {
+        EXPECT_CALL(mockConfig, getVariable(testing::_))
+            .WillOnce(testing::WithArg<0>([this](std::size_t configVariableIndex) {
+                EXPECT_FALSE(configVariableIndexes.contains(configVariableIndex));
+                configVariableIndexes.insert(configVariableIndex);
+                return std::any{};
+            }));
+        valueGetter();
+    };
+    EXPECT_CALL(mockConfigConversion, string(testing::_, testing::An<std::function<void(ConfigString<256>)>>(), testing::_))
+        .WillRepeatedly(testing::WithArg<2>(saveString));
+    EXPECT_CALL(mockConfigConversion, string(testing::_, testing::An<std::function<void(ConfigString<64>)>>(), testing::_))
+        .WillRepeatedly(testing::WithArg<2>(saveString));
 
     configSchema.performConversion(mockConfigConversion);
     EXPECT_EQ(configVariableIndexes.size(), ConfigVariableTypes::size());

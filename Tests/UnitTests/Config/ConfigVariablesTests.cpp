@@ -15,7 +15,11 @@ public:
             if (ConfigVariable::kDefaultValue != ConfigVariable::ValueType::kMin)
                 return typename ConfigVariable::ValueType{ConfigVariable::ValueType::kMin};
             return typename ConfigVariable::ValueType{ConfigVariable::ValueType::kMax};
-        } else
+        } else if constexpr (std::is_integral_v<typename ConfigVariable::ValueType>)
+            return static_cast<typename ConfigVariable::ValueType>(ConfigVariable::kDefaultValue + 1);
+        else if constexpr (std::is_constructible_v<typename ConfigVariable::ValueType, const char*>)
+            return typename ConfigVariable::ValueType{"test"};
+        else
             static_assert(!std::is_same_v<ConfigVariable, ConfigVariable>, "Unsupported type");
     }
 
