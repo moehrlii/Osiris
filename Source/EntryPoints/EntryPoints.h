@@ -75,6 +75,7 @@ void ViewRenderHook_onRenderStart(cs2::CViewRender* thisptr) noexcept
 
     hookContext.make<NoScopeInaccuracyVis>().update();
     hookContext.make<TriggerBot>().update();
+    hookContext.make<AimBot>().update();
     hookContext.make<RenderingHookEntityLoop>().run();
     hookContext.make<GlowSceneObjects>().removeUnreferencedObjects();
     hookContext.make<DefusingAlert>().run();

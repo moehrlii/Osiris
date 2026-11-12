@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Features/Combat/AimBot/AimBotConfigVariables.h>
 #include <Features/Combat/TriggerBot/TriggerBotConfigVariables.h>
 #include <Features/Combat/SniperRifles/NoScopeInaccuracyVis/NoScopeInaccuracyVisConfigVariables.h>
 #include <Features/Hud/BombPlantAlert/BombPlantAlertConfigVariables.h>
@@ -104,5 +105,13 @@ using ConfigVariableTypes = TypeList<
     trigger_bot_vars::TeamCheck,
     trigger_bot_vars::DelayMin,
     trigger_bot_vars::DelayMax,
-    trigger_bot_vars::ShotDuration
+    trigger_bot_vars::ShotDuration,
+    aim_bot_vars::Enabled,
+    aim_bot_vars::ActivationKey,
+    aim_bot_vars::TeamCheck,
+    aim_bot_vars::FovPixels,
+    aim_bot_vars::MaxDistance,
+    aim_bot_vars::Smooth,
+    aim_bot_vars::VerticalAdjustment,
+    aim_bot_vars::DeadzonePixels
 >;
