@@ -8,6 +8,7 @@
 #include <Features/Hud/DefusingAlert/DefusingAlertConfigVariables.h>
 #include <Features/Hud/KillfeedPreserver/KillfeedPreserverConfigVariables.h>
 #include <Features/Hud/PostRoundTimer/PostRoundTimerConfigVariables.h>
+#include <Features/Misc/ChatTranslate/ChatTranslateConfigVariables.h>
 #include <Features/Sound/SoundVisualizationConfigVariables.h>
 #include <Features/Visuals/ModelGlow/ModelGlowConfigVariables.h>
 #include <Features/Visuals/OutlineGlow/OutlineGlowConfigVariables.h>
@@ -113,5 +114,11 @@ using ConfigVariableTypes = TypeList<
     aim_bot_vars::MaxDistance,
     aim_bot_vars::Smooth,
     aim_bot_vars::VerticalAdjustment,
-    aim_bot_vars::DeadzonePixels
+    aim_bot_vars::DeadzonePixels,
+    chat_translate_vars::Enabled,
+    chat_translate_vars::Provider,
+    chat_translate_vars::TargetLanguage,
+    chat_translate_vars::DeepLApiKey,
+    chat_translate_vars::MicrosoftApiKey,
+    chat_translate_vars::MicrosoftRegion
 >;
